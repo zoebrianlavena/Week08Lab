@@ -50,6 +50,16 @@ public class NoteServlet extends HttpServlet {
                         updateTable(request);
                     }
                     break;
+                case "delete":
+                    int selectednotetodelete = Integer.parseInt(request.getParameter("selectednote"));
+                    noteservice.delete(selectednotetodelete);
+                    updateTable(request);
+                    break;
+                case "edit":
+                    int selectednotetoedit = Integer.parseInt(request.getParameter("selectednote"));
+                    request.setAttribute("content", noteservice.get(selectednotetoedit).getContents());
+                    updateTable(request);
+                    break;
             }
         } catch (Exception e) {
             System.out.println(e);

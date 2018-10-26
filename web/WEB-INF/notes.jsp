@@ -15,8 +15,6 @@
     </head>
     <body>
         <h1>Notes!</h1>
-
-        <form method="post" action="notes">
             <table>
                 <thead>
                 <th>Note ID</th>
@@ -33,22 +31,25 @@
                             <th>${note.dateCreated}</th>
                             <th>${note.contents}</th>
                             <th>
-                                <input type="hidden" value="delete"/>
-                                <input type="submit" value="Delete"/>
+                                <form method="post" action="notes?action=delete">
+                                    <input type="submit" value="Delete"/>  
+                                    <input type="hidden" name="selectednote" value="${note.noteId}"/>
+                                </form>
                             </th>
                             <th>
-                                <input type="hidden" value="edit"/>
-                                <input type="submit" value="edit"/>
+                                <form method="post" action="notes?action=edit">
+                                    <input type="submit" value="edit"/>
+                                    <input type="hidden" name="selectednote" value="${note.noteId}"/>
+                                </form>
                             </th>
                         </tr>
                     </c:forEach>
                 </tbody>                
             </table>
-        </form>
 
         <form method="post" action="notes?action=add">
-            <textarea cols="40" rows="15" name="content">
-            
+            <textarea cols="40" rows="15">
+            ${content}
             </textarea>
             <input type="submit" value="Add"/>
         </form>
