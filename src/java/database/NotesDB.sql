@@ -4,7 +4,7 @@ CREATE DATABASE NotesDB;
 USE NotesDB;
 
 CREATE TABLE notes (
-    noteId INT,
+    noteId INT NOT NULL AUTO_INCREMENT,
     dateCreated DATE,
     content VARCHAR(100),
     CONSTRAINT PK_noteId PRIMARY KEY (noteId));

@@ -21,7 +21,7 @@ public class ConnectionPool {
     private ConnectionPool() {
         try{
             InitialContext ic = new InitialContext();
-            dataSource = (DataSource) ic.lookup("java:/comp/env/jdbc/NotesDB");
+            dataSource = (DataSource) ic.lookup("java:/comp/env/jdbc/notesdb");
         } catch (NamingException e) {
             System.out.println(e);
         }

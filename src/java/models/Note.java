@@ -6,7 +6,9 @@
 package models;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -20,10 +22,10 @@ public class Note implements Serializable {
 
     public Note() {
     }
-
-    public Note(int noteId, Date dateCreated, String contents) {
+    
+    public Note(int noteId, String dateCreated, String contents) throws ParseException{
         this.noteId = noteId;
-        this.dateCreated = dateCreated;
+        this.dateCreated = (Date) new SimpleDateFormat("yyyy-mm-dd").parse(dateCreated);
         this.contents = contents;
     }
 
@@ -55,5 +57,6 @@ public class Note implements Serializable {
     public String toString() {
         return "Note{" + "noteId=" + noteId + ", dateCreated=" + dateCreated + ", contents=" + contents + '}';
     }
-     
+
+    
 }

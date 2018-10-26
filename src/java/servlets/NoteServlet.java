@@ -5,12 +5,17 @@
  */
 package servlets;
 
+import database.NotesDB;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.Note;
+import services.NoteService;
 
 /**
  *
@@ -21,21 +26,45 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        updateTable(request);
         getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if(action == null)
+
+        String action;
+        action = request.getParameter("action");
+        String content = request.getParameter("content");
+        NoteService noteservice = new NoteService();
+        if (action == null) {
             return;
-        switch(action){
-            case "add":
-                request.setAttribute("message", "you clicked add");
-                break;
+        }
+
+        try {
+            switch (action) {
+                case "add":
+                    if (!(content == null || content.equals(""))) {
+                        noteservice.insert(content);
+                        updateTable(request);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
         getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
+    }
+
+    private void updateTable(HttpServletRequest request) {
+        try {
+            NoteService noteservice = new NoteService();
+            List<Note> notelist = noteservice.getAll();
+            request.setAttribute("notes", notelist);
+        } catch (Exception ex) {
+            Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

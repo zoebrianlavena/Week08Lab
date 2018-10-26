@@ -5,28 +5,32 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserDB {
+public class NotesDB {
 
     public int insert(Note note) throws NotesDBException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
 
         try {
-            String preparedQuery = "INSERT INTO notes (noteId, dateCreated, content) VALUES (?, ?, ?)";
-            PreparedStatement ps = connection.prepareStatement(preparedQuery);
-            ps.setString(1, String.format("%s",note.getNoteId()));
-            ps.setString(2, String.format("%s",note.getDateCreated()));
-            ps.setString(3, String.format("%s",note.getContents()));
+            String preparedQ = "insert into notes(datecreated,content) values(?,?)";
+            PreparedStatement ps = connection.prepareStatement(preparedQ);
+            ps.setDate(1,new java.sql.Date(note.getDateCreated().getTime()));
+            ps.setString(2, note.getContents());
             int rows = ps.executeUpdate();
             return rows;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, "Cannot insert " + note.toString(), ex);
-            throw new NotesDBException("Error inserting user");
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot insert " + note.toString(), ex);
+            throw new NotesDBException("Error inserting note");
         } finally {
             pool.freeConnection(connection);
         }
@@ -47,17 +51,18 @@ public class UserDB {
             int rows = ps.executeUpdate();
             return rows;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, "Cannot update " + note.toString(), ex);
-            throw new NotesDBException("Error updating user");
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot update " + note.toString(), ex);
+            throw new NotesDBException("Error updating note");
         } finally {
             pool.freeConnection(connection);
         }
     }
 
-    public List<Note> getAll() throws NotesDBException {
+    public List<Note> getAll() throws NotesDBException, ParseException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
-
+        
+        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -67,14 +72,14 @@ public class UserDB {
             List<Note> notes = new ArrayList<>();
             while (rs.next()) {
                 notes.add(new Note(rs.getInt("noteId"),
-                                    rs.getDate("dateCreated"),
+                                    dateformat.format(rs.getDate("dateCreated")),
                                     rs.getString("content")));
             }
             pool.freeConnection(connection);
             return notes;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, "Cannot read users", ex);
-            throw new NotesDBException("Error getting Users");
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot read users", ex);
+            throw new NotesDBException("Error getting Notes");
         } finally {
             try {
                 rs.close();
@@ -85,17 +90,12 @@ public class UserDB {
         }
     }
 
-    /**
-     * Get a single user by their username.
-     *
-     * @param username The unique username.
-     * @return A User object if found, null otherwise.
-     * @throws NotesDBException
-     */
-    public Note getNote(int noteId) throws NotesDBException {
+    public Note getNote(int noteId) throws NotesDBException, ParseException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         String selectSQL = "SELECT * FROM notes WHERE noteId = ?";
+        
+        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -107,13 +107,13 @@ public class UserDB {
             Note note = null;
             while (rs.next()) {
                 note = new Note(rs.getInt("noteId"),
-                                rs.getDate("dateCreated"),
+                                dateformat.format(rs.getDate("dateCreated")),
                                 rs.getString("content"));
             }
             pool.freeConnection(connection);
             return note;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, "Cannot read users", ex);
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot read users", ex);
             throw new NotesDBException("Error getting Users");
         } finally {
             try {
@@ -137,7 +137,7 @@ public class UserDB {
             int rows = ps.executeUpdate();
             return rows;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, "Cannot delete " + note.toString(), ex);
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot delete " + note.toString(), ex);
             throw new NotesDBException("Error deleting User");
         } finally {
             pool.freeConnection(connection);
