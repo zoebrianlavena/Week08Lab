@@ -50,9 +50,7 @@
 
     <c:if test="${selectednotetoedit == null}">
         <form method="post" action="notes?action=add">
-            <textarea cols="40" rows="15" name="content">
-                
-            </textarea>
+            <textarea cols="40" rows="15" name="content"></textarea>
             <input type="submit" value="Add"/>
         </form>
     </c:if>
@@ -60,9 +58,7 @@
     <c:if test="${selectednotetoedit != null}">
         <form method="post" action="notes?action=edit">
             <input type="hidden" name="hiddennote" value="${selectednotetoedit.noteId}"/>
-            <textarea cols="40" rows="15" name="content">
-                  ${selectednotetoedit.contents}
-            </textarea>
+            <textarea cols="40" rows="15" name="content">${selectednotetoedit.contents}</textarea>
             <input type="submit" value="Add"/>
         </form>
     </c:if>

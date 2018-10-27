@@ -57,15 +57,11 @@ public class NoteServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     if (!(content == null || content.equals(""))) {
-                        if (!(request.getParameter("selectednotetoedit") == null || request.getParameter("selectednotetoedit").equals(""))) {
-                            int selectednotetoupdate = Integer.parseInt(request.getParameter("selectednotetoedit"));
-                            noteservice.update(selectednotetoupdate, content);
-                            updateTable(request);
-                        } else {
-                            noteservice.insert(content);
-                            updateTable(request);
-                        }
+                        noteservice.insert(content);
+                    } else {
+                        request.setAttribute("message", "Content can't be empty");
                     }
+                    updateTable(request);
                     break;
                 case "delete":
                     int selectednotetodelete = Integer.parseInt(request.getParameter("selectednotetodelete"));
@@ -73,7 +69,11 @@ public class NoteServlet extends HttpServlet {
                     updateTable(request);
                     break;
                 case "edit":
+                    if (!(content == null || content.equals(""))){
                     noteservice.update(Integer.parseInt(request.getParameter("hiddennote")), content);
+                    } else {
+                        request.setAttribute("message", "Content can't be null");
+                    }
                     updateTable(request);
                     break;
             }
