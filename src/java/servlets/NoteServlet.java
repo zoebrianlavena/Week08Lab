@@ -26,6 +26,17 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        NoteService noteservice = new NoteService();
+        String action = request.getParameter("action");
+        if (action != null && action.equals("view")) {
+            int selectednotetoview = Integer.parseInt(request.getParameter("selectednotetoview"));
+            try {
+                Note notetoview = noteservice.get(selectednotetoview);
+                request.setAttribute("selectednotetoedit", notetoview);
+            } catch (Exception ex) {
+                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         updateTable(request);
         getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
     }
@@ -34,9 +45,9 @@ public class NoteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action;
-        action = request.getParameter("action");
+        String action = request.getParameter("action");
         String content = request.getParameter("content");
+
         NoteService noteservice = new NoteService();
         if (action == null) {
             return;
@@ -46,18 +57,23 @@ public class NoteServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     if (!(content == null || content.equals(""))) {
-                        noteservice.insert(content);
-                        updateTable(request);
+                        if (!(request.getParameter("selectednotetoedit") == null || request.getParameter("selectednotetoedit").equals(""))) {
+                            int selectednotetoupdate = Integer.parseInt(request.getParameter("selectednotetoedit"));
+                            noteservice.update(selectednotetoupdate, content);
+                            updateTable(request);
+                        } else {
+                            noteservice.insert(content);
+                            updateTable(request);
+                        }
                     }
                     break;
                 case "delete":
-                    int selectednotetodelete = Integer.parseInt(request.getParameter("selectednote"));
+                    int selectednotetodelete = Integer.parseInt(request.getParameter("selectednotetodelete"));
                     noteservice.delete(selectednotetodelete);
                     updateTable(request);
                     break;
                 case "edit":
-                    int selectednotetoedit = Integer.parseInt(request.getParameter("selectednote"));
-                    request.setAttribute("content", noteservice.get(selectednotetoedit).getContents());
+                    noteservice.update(Integer.parseInt(request.getParameter("hiddennote")), content);
                     updateTable(request);
                     break;
             }

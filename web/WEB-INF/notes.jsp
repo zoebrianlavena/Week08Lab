@@ -15,44 +15,58 @@
     </head>
     <body>
         <h1>Notes!</h1>
-            <table>
-                <thead>
-                <th>Note ID</th>
-                <th>Date Created</th>
-                <th>Contents</th>
-                <th></th>
-                <th></th>
-                </thead>
+        <table>
+            <thead>
+            <th>Note ID</th>
+            <th>Date Created</th>
+            <th>Contents</th>
+            <th></th>
+            <th></th>
+        </thead>
 
-                <tbody>
-                    <c:forEach var="note" items="${notes}">
-                        <tr>
-                            <th>${note.noteId}</th>
-                            <th>${note.dateCreated}</th>
-                            <th>${note.contents}</th>
-                            <th>
-                                <form method="post" action="notes?action=delete">
-                                    <input type="submit" value="Delete"/>  
-                                    <input type="hidden" name="selectednote" value="${note.noteId}"/>
-                                </form>
-                            </th>
-                            <th>
-                                <form method="post" action="notes?action=edit">
-                                    <input type="submit" value="edit"/>
-                                    <input type="hidden" name="selectednote" value="${note.noteId}"/>
-                                </form>
-                            </th>
-                        </tr>
-                    </c:forEach>
-                </tbody>                
-            </table>
+        <tbody>
+            <c:forEach var="note" items="${notes}">
+                <tr>
+                    <th>${note.noteId}</th>
+                    <th>${note.dateCreated}</th>
+                    <th>${note.contents}</th>
+                    <th>
+                        <form method="post" action="notes?action=delete">
+                            <input type="submit" value="Delete"/>  
+                            <input type="hidden" name="selectednotetodelete" value="${note.noteId}"/>
+                        </form>
+                    </th>
+                    <th>
+                        <form method="get" action="notes">
+                            <input type="submit" value="Edit"/>
+                            <input type="hidden" name="action" value="view"/>
+                            <input type="hidden" name="selectednotetoview" value="${note.noteId}"/>
+                        </form>
+                    </th>
+                </tr>
+            </c:forEach>
+        </tbody>                
+    </table>
 
+    <c:if test="${selectednotetoedit == null}">
         <form method="post" action="notes?action=add">
-            <textarea cols="40" rows="15">
-            ${content}
+            <textarea cols="40" rows="15" name="content">
+                
             </textarea>
             <input type="submit" value="Add"/>
         </form>
-        ${message}
-    </body>
+    </c:if>
+
+    <c:if test="${selectednotetoedit != null}">
+        <form method="post" action="notes?action=edit">
+            <input type="hidden" name="hiddennote" value="${selectednotetoedit.noteId}"/>
+            <textarea cols="40" rows="15" name="content">
+                  ${selectednotetoedit.contents}
+            </textarea>
+            <input type="submit" value="Add"/>
+        </form>
+    </c:if>
+
+    ${message}
+</body>
 </html>
