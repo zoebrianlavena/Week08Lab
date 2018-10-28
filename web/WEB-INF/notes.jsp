@@ -29,7 +29,7 @@
                 <tr>
                     <th>${note.noteId}</th>
                     <th>${note.dateCreated}</th>
-                    <th>${note.contents}</th>
+                    <th>${note.content}</th>
                     <th>
                         <form method="post" action="notes?action=delete">
                             <input type="submit" value="Delete"/>  
@@ -58,7 +58,7 @@
     <c:if test="${selectednotetoedit != null}">
         <form method="post" action="notes?action=edit">
             <input type="hidden" name="hiddennote" value="${selectednotetoedit.noteId}"/>
-            <textarea cols="40" rows="15" name="content">${selectednotetoedit.contents}</textarea>
+            <textarea cols="40" rows="15" name="content">${selectednotetoedit.content}</textarea>
             <input type="submit" value="Add"/>
         </form>
     </c:if>

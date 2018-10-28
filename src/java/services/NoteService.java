@@ -42,7 +42,6 @@ public class NoteService {
 //        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
 //        String notedate = dateformat.format(date);
         Note note = new Note(0, Calendar.getInstance().getTime(), content);
-        System.out.println("here");
         return noteDB.insert(note);
     }
 }
