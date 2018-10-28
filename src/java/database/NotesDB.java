@@ -25,7 +25,7 @@ public class NotesDB {
             String preparedQ = "insert into notes(datecreated,content) values(?,?)";
             PreparedStatement ps = connection.prepareStatement(preparedQ);
             ps.setDate(1,new java.sql.Date(note.getDateCreated().getTime()));
-            ps.setString(2, note.getContents());
+            ps.setString(2, note.getContent());
             int rows = ps.executeUpdate();
             return rows;
         } catch (SQLException ex) {
@@ -45,7 +45,7 @@ public class NotesDB {
 
             PreparedStatement ps = connection.prepareStatement(preparedSQL);
 
-            ps.setString(1, String.format("%s",note.getContents()));
+            ps.setString(1, String.format("%s",note.getContent()));
             ps.setString(2, String.format("%s",note.getNoteId()));
 
             int rows = ps.executeUpdate();
@@ -72,7 +72,7 @@ public class NotesDB {
             List<Note> notes = new ArrayList<>();
             while (rs.next()) {
                 notes.add(new Note(rs.getInt("noteId"),
-                                    dateformat.format(rs.getDate("dateCreated")),
+                                    rs.getDate("dateCreated"),
                                     rs.getString("content")));
             }
             pool.freeConnection(connection);
@@ -107,7 +107,7 @@ public class NotesDB {
             Note note = null;
             while (rs.next()) {
                 note = new Note(rs.getInt("noteId"),
-                                dateformat.format(rs.getDate("dateCreated")),
+                                rs.getDate("dateCreated"),
                                 rs.getString("content"));
             }
             pool.freeConnection(connection);

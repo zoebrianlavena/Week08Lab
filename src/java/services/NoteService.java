@@ -25,10 +25,10 @@ public class NoteService {
     }
 
     public int update(int noteId, String content) throws Exception {
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
-        String notedate = dateformat.format(date);
-        Note note = new Note(noteId, notedate, content);
+//        Date date = Calendar.getInstance().getTime();
+//        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+//        String notedate = dateformat.format(date);
+        Note note = new Note(noteId, Calendar.getInstance().getTime(), content);
         return noteDB.update(note);
     }
 
@@ -38,10 +38,10 @@ public class NoteService {
     }
 
     public int insert(String content) throws Exception {
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
-        String notedate = dateformat.format(date);
-        Note note = new Note(0, notedate, content);
+//        Date date = Calendar.getInstance().getTime();
+//        DateFormat dateformat = new SimpleDateFormat("yyyy-mm-dd");
+//        String notedate = dateformat.format(date);
+        Note note = new Note(0, Calendar.getInstance().getTime(), content);
         System.out.println("here");
         return noteDB.insert(note);
     }
