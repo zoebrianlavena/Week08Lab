@@ -55,17 +55,39 @@ public class NotesDB {
     }
 
     public List<Note> getAll() throws NotesDBException, ParseException {
-
-        return null;
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try {
+            List<Note> notes = em.createNamedQuery("Note.findAll", Note.class).getResultList();
+            return notes;
+        } finally {
+            em.close();
+        }
     }
 
     public Note getNote(int noteId) throws NotesDBException, ParseException {
-
-        return null;
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try {
+            Note thisnote = em.find(Note.class, noteId);
+            return thisnote;
+        } finally {
+            em.close();
+        }
     }
 
     public int delete(Note note) throws NotesDBException {
-
-        return 0;
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            em.remove(note);
+            trans.commit();
+            return 1;
+        } catch (Exception ex) {
+            trans.rollback();
+            Logger.getLogger(NotesDB.class.getName()).log(Level.SEVERE, "Cannot insert " + note.toString(), ex);
+            throw new NotesDBException("Error inserting user");
+        } finally{
+            em.close();
+        }
     }
 }
